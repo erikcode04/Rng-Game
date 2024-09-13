@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
 
 function App() {
    const [counter, setCounter] =  useState([]);
   const [randomNumber, setRandomNumber] = useState(Math.floor(Math.random() * 100));
+  const [points, setPoints] = useState(0);
+  const [listOrder, setListOrder] = useState([]);
+  const [finished, setFinished] = useState(false);
 const [list, setList] = useState({
   buttonOne : "place",
   buttonTwo : "place",
@@ -19,32 +22,92 @@ const [list, setList] = useState({
 
 function buttonClicked(event){
 const buttonName = event.target.name;
+console.log(buttonName);
 if(list[buttonName] !== "place"){
   return;
 }
+const buttonIndices = {
+  buttonOne: 0,
+  buttonTwo: 1,
+  buttonThree: 2,
+  buttonFour: 3,
+  buttonFive: 4,
+  buttonSix: 5,
+  buttonSeven: 6,
+  buttonEight: 7,
+  buttonNine: 8,
+  buttonTen: 9,
+};
+setListOrder((prevListOrder) => {
+  const newListOrder = [...prevListOrder];
+  newListOrder[buttonIndices[buttonName]] = randomNumber;
+  return newListOrder;
+});
+console.log("listOrder",listOrder);
 setList((prevList) => ({
   ...prevList, 
   [buttonName] : randomNumber,
 }));
+
 setCounter((prevCounter) => {
  let updatedCounter = [...prevCounter, randomNumber];
-
  if (updatedCounter.length === 10) {
-  let calcutlatingArray = [];
+
+  let smallArray = [];
+  let beforeBigArray = [];
+  let copiedArray = [...updatedCounter];
+
  
-for (let index = 0; index < updatedCounter.length; index++) {
-  if (calcutlatingArray.length === 0) {
-    calcutlatingArray.push(updatedCounter[index]);
-  }
-  if (calcutlatingArray.length > 0) {
-    const secondLast = index - 1;
-    if (calcutlatingArray[secondLast] > updatedCounter) {
-      
-    }
-  }
+for (let index = 0; index < (updatedCounter.length)/2; index++) {
+  const smallest = Math.min(...copiedArray);
+  copiedArray.splice(copiedArray.indexOf(smallest), 1 );
+  smallArray.push(smallest);
+
+  const biggeset = Math.max(...copiedArray);
+  copiedArray.splice(copiedArray.indexOf(biggeset), 1);
+  beforeBigArray.push(biggeset);
+}
+//funkar
+
+
+ let bigArray = [];
+
+for (let index = beforeBigArray.length - 1; index >= 0; index--) {
+  const element = beforeBigArray[index];
+bigArray.push(element)
 }
 
 
+
+//funkar
+let smallNumberCounter = 0;
+let lowNumber = true;
+let countPoints = 0;
+for (let index = 0; index < updatedCounter.length; index++) {
+  console.log(index);
+  if (index >= 5) {
+    smallNumberCounter++;
+    lowNumber = false;
+    let element = listOrder[index];
+    if (element === bigArray[index - 5]) {
+      console.log("point added at:", index);
+      countPoints++;
+    }
+  }
+  if (index <= 4 && lowNumber) {
+    smallNumberCounter++;
+        let element = listOrder[index];
+    if (element === smallArray[index]) {
+      console.log("point added at:", index);
+      countPoints++;
+    }
+  }
+}
+console.log("Points: ", countPoints);
+console.log("smallArray: ", smallArray);
+console.log("bigArray: ", bigArray);
+setPoints(countPoints);
+setFinished(true);
  }
  return updatedCounter;
 });
@@ -55,7 +118,7 @@ setRandomNumber(Math.floor(Math.random() * 100 + 1));
 
   return (
     <div className="App">
-      <h1> {randomNumber}</h1>
+      <h1> {finished ? `Points: ${points}` : randomNumber}</h1>
 <div className='listContainer'>
 
 <div className='listItem'>
