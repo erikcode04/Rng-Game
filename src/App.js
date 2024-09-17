@@ -118,7 +118,7 @@ setRandomNumber(Math.floor(Math.random() * 100 + 1));
 
   return (
     <div className="App">
-      <h1> {finished ? `Points: ${points}` : randomNumber}</h1>
+      <h1 className='statusDisplayer' > {finished ? `Points: ${points}` : randomNumber} </h1>
 <div className='listContainer'>
 
 <div className='listItem'>
